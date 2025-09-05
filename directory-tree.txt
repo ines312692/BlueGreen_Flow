@@ -1,0 +1,19 @@
+BlueGreen_Flow/
+├── app/
+│   ├── src/
+│   │   └── server.js
+│   ├── Dockerfile
+│   └── package.json
+├── k8s/
+│   ├── deployement-blue.yaml
+│   ├── deployement-green.yaml
+│   ├── ingress.yaml
+│   ├── namespace.yaml
+│   └── service.yaml
+├── scripts/
+│   ├── deploy.sh
+│   ├── health_check.sh
+│   ├── port_forward.sh
+│   └── switch_traffic.sh
+├── BlueGreen_Flow.iml
+└── README.md
