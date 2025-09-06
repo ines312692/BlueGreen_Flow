@@ -8,7 +8,7 @@ NS="${NS:-blue-green-demo}"
 
 if [[ "$TARGET" != "blue" && "$TARGET" != "green" ]]; then
   echo "Usage: $0 [blue|green] <image>"
-  echo "Ex: $0 green <REGISTRY>/<REPO>/blue-green-app:1.2.0"
+  echo "Ex: $0 green inestmimi123/blue-green-app:1.2.0"
   exit 1
 fi
 if [[ -z "${IMAGE}" ]]; then
