@@ -168,6 +168,49 @@ kubectl -n blue-green-demo get endpoints web -o wide
 
 - Script usage on Windows: Run under WSL or Git Bash. Otherwise, copy the shown `kubectl` commands to PowerShell.
 
+## Advanced usage
+
+- Windows users: scripts are Bash. Use WSL/Git Bash or run the equivalent kubectl commands shown.
+- GitOps flow: This repo pairs with a GitOps repository (see Jenkinsfile env GITOPS_REPO_SSH). The pipeline updates deployment-green.yaml and switches Service selector via PR/commit.
+- Health gates: Before switching traffic, ensure /health returns 200 for the target color. Example curl probes are provided.
+- Rollback strategy: Switch back selector and optionally scale down the bad color. Keep both colors for fast recovery.
+
+## Jenkins pipeline overview
+
+The included Jenkinsfile performs:
+- Build Node app and Docker image, push to registry.
+- Update GitOps repo with the new image in deployment-green and APP_VERSION env.
+- Wait for GREEN health via HEALTH_URL.
+- Switch Service selector to green. On failure, auto-rollback selector to blue.
+
+Required Jenkins credentials:
+- docker-registry: Docker username/password
+- gitops-bot: credentials to push to the GitOps repo
+
+Key env vars in Jenkinsfile:
+- REGISTRY, APP_NAME, GITOPS_REPO_SSH, GITOPS_BRANCH, HEALTH_URL, NAMESPACE
+
+## Observability quick start
+
+To add Prometheus metrics to the app, install prom-client and expose /metrics:
+
+```bash
+npm i prom-client
+```
+
+Add to app/src/server.js:
+
+```js
+const client = require('prom-client');
+client.collectDefaultMetrics();
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
+});
+```
+
+Then deploy kube-prometheus-stack and a ServiceMonitor as shown in GUIDE.md.
+
 ## License
 
 MIT
